@@ -20,21 +20,38 @@
         
         if ($final > 89){
             print ("Your final grade is $final. You got an A. Congratulations!");
+            $rate = "A";
         }
         else if ($final > 79){
             print ("Your final grade is $final. You got an B.");
+            $rate = "B";
         }
         else if ($final > 69){
             print ("Your final grade is $final. You got an C.");
+            $rate = "C";
         }
         else if ($final > 59){
             print ("Your final grade is $final. You got an D.");
+            $rate = "D";
         }
         else if ($final > 0){
             print ("Your final grade is $final. You got an F.");
+            $rate = "F";
         }
         else {
             print("Illegal grade less than 0. FInal grade = $final");
+            $rate = "Illegal";
+        }
+        
+        print("<br></br>");
+        
+        switch($rate){
+            case "A": print("Execellent!");break;
+            case "B": print("Good!");break;
+            case "C": print("Not bad!");break;
+            case "D": print("Normal."); break;
+            case "F": print("Try again"); break;
+            default: print("Illegal grade");
         }
     ?>
 </body>
