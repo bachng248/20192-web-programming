@@ -1,57 +1,76 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Business Listings</title>
-  </head>
-  <body>
+<html>
+<head>
+<title>
+<?php
+ $doc_title = 'Business Listings';
+ echo "$doc_title\n";
+?>
+</title>
+</head>
+<body>
+<h1>
+<?= $doc_title ?>
+</h1>
+
+<?php
+ // establish the database connection
+
+ require_once('db_login.php');
+
+ $pick_message = 'Click on a category to find business listings:';
+?>
+
+<table border=0>
+<tr><td valign="top">
+    <table border=5>
+    <tr><td class="picklist"><strong><?= $pick_message ?></strong></td></tr>
+    <p>
     <?php
-      require('db.php');
-      $connect = connect_db();
-      $keys = array('category');
-      foreach ($keys as $key) {
-        if (array_key_exists($key, $_GET)) {
-          $$key = $_GET[$key];
-        } else {
-          $$key = NULL;
+     // build the scrolling pick list for the categories
+     $sql = "SELECT * FROM categories";
+     $result = $db->query($sql);
+     if (DB::isError($result)) die($result->getMessage(  ));
+     while ($row = $result->fetchRow(  )){
+         if (DB::isError($row)) die($row->getMessage(  ));
+         echo '<tr><td class="formlabel">';
+         echo "<a href=\"biz_listing.php?cat_id=$row[0]\">";
+         echo "$row[1]</a></td></tr>\n";
+     }
+    ?>
+    </table>
+</td>
+<td valign="top">
+     <table border=1>
+     <?php
+      $cat_id = filter_input(INPUT_GET, 'cat_id');        
+
+      if ($cat_id) {
+        $sql = "SELECT * FROM businesses b, biz_categories bc where";
+        $sql .= " categoryid = '$cat_id'";
+        $sql .= " and b.businessid = bc.businessid";
+        $result = $db->query($sql);
+        if (DB::isError($result)) die($result->getMessage(  ));
+        
+        $color = 0;
+        while ($row = $result->fetchRow(  )){
+          if (DB::isError($row)) die($row->getMessage(  ));
+          if ($color == 1) {
+            $bg_shade = 'dark';
+            $color = 0;
+          } else {
+            $bg_shade = 'light';
+            $color = 1;
+          }
+          echo "<tr>\n";
+          for($i = 0; $i < count($row); $i++) {
+            echo "<td class=\"$bg_shade\">$row[$i]</td>\n";
+          }
+          echo "</tr>\n";
         }
       }
-    ?>
-    <h1>Business Listings</h1>
-    <form action="biz_listing.php" method="get" style="float: left; margin-right: 2rem;">
-      <select size="5" name="category" onchange="this.form.submit()">
-        <?php
-          $results_id = list_all($connect, 'categories', 'categoryID', true);
-          while ($row = mysqli_fetch_row($results_id)) {
-            print '<option>';
-            print $row[0];
-            print '</option>';
-          }
-        ?>
-      </select>
-    </form>
-    <br>
-    <table border="1">
-      <tbody>
-        <?php
-          $table = '((businesses
-INNER JOIN biz_categories ON businesses.businessID = biz_categories.businessID)
-INNER JOIN categories ON categories.categoryID = biz_categories.categoryID)';
-          if ($category) {
-            $condition = "categories.categoryID='$category'";
-          } else {
-            $condition = NULL;
-          }
-          $results_id = list_all($connect, $table, NULL, false, $condition);
-          while ($row = mysqli_fetch_row($results_id)) {
-            print '<tr>';
-            foreach ($row as $field) {
-              print "<td>$field</td> ";
-            }
-            print '</tr>';
-          }
-        ?>
-      </tbody>
-    </table>
-  </body>
+     ?>
+     </table>
+</td></tr>
+</table>
+</body>
 </html>
