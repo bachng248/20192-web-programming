@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE student [
+    <!ELEMENT student (fullname, studentid, class, university) >
+    <!ELEMENT fullname (firstname, lastname) >
+]>
+
+<student>
+    <fullname>
+        <firstname>Bach</firstname>
+        <lastname>Nguyen Gia</lastname>
+    </fullname>
+    <studentid>20160306</studentid>
+    <class>ICT.01-K61</class>
+    <university>HUST</university>
+</student>
